@@ -10,6 +10,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', AuthController.login)
+app.post('/token', AuthController.tokenChecker)
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)

@@ -47,6 +47,45 @@ class AuthController {
             return res.status(500).json({resp: error})
         }
     }
+
+    static async tokenChecker(req, res) {
+        try {
+            const user = await prisma.user.findUniqueOrThrow({
+                where: {
+                    email: req.body.email
+                }
+            })
+            
+            const token = await prisma.token.findUnique({
+                where: {
+                    id: Number(user.tokenId)
+                }
+            })
+
+            // Validate the token
+            if (token.expired_at < new Date()) {
+                return res.status(401).json({resp: "Token expired"})
+            }
+
+            if (req.query.token != token.token) {
+                return res.status(401).json({resp: "Denied"})
+            }
+
+            // Make the token expired because its already used
+            await prisma.token.update({
+                where: {
+                    id: token.id
+                },
+                data: {
+                    expired_at: new Date()
+                }
+            })
+            return res.status(200).json({resp: "Pass"})
+
+        } catch (error) {
+            return res.status(500).json({msg: error})
+        }
+    }
 }
 
 module.exports = AuthController
