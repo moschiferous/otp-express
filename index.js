@@ -6,6 +6,8 @@ const port = 3000
 
 const AuthController = require('./controllers/AuthController')
 
+const auth = require("./middlewares/AuthMiddleware");
+
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -14,6 +16,10 @@ app.get('/', (req, res) => {
 app.group('/token', (router) => {
     router.post('/get', AuthController.tokenGetter)
     router.post('/check', AuthController.tokenChecker)
+})
+
+app.get('/mid-tes', auth, (req, res) => {
+    res.send('Pass')
 })
 
 app.listen(port, () => {
