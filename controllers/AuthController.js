@@ -1,6 +1,8 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client")
 
 const prisma = new PrismaClient()
+
+const jwt = require("jsonwebtoken")
 
 class AuthController {
     static async tokenGetter(req, res){
@@ -80,7 +82,13 @@ class AuthController {
                     expired_at: new Date()
                 }
             })
-            return res.status(200).json({resp: "Pass"})
+
+            // generate jwttoken
+            const jwtToken = jwt.sign({
+                id: user.id,
+                email: user.email
+            }, process.env.SECRET_TOKEN)
+            return res.status(200).json({resp: jwtToken})
 
         } catch (error) {
             return res.status(500).json({msg: error})
