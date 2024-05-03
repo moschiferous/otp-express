@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient()
 
 class AuthController {
-    static async login(req, res){
+    static async tokenGetter(req, res){
         try {
             let user = await prisma.user.findUnique({
                 where: {
